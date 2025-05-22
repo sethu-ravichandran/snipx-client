@@ -1,54 +1,51 @@
-import React, { useState } from 'react';
-import { Scissors } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { shortenUrl } from '../util/urlUtility';
+import React, { useState } from 'react'
+import { Scissors } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { shortenUrl } from '../util/urlUtility'
 
-const UrlShortener = () => {
-  const [url, setUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+const UrlShortener = ({ onShorten }) => {
+  const [url, setUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setError('');
+    e.preventDefault()
+    setError('')
 
     if (!url.trim()) {
-      setError('Please enter a URL');
-      return;
+      setError('Please enter a URL')
+      return
     }
 
     try {
-      new URL(url); // Will throw if invalid
+      new URL(url)
     } catch (err) {
-      setError('Please enter a valid URL (include http:// or https://)');
-      return;
+      setError('Please enter a valid URL (include http:// or https://)')
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      await shortenUrl(url);
-      setUrl('');
-      toast.success('URL shortened successfully!');
+      await shortenUrl(url)
+      setUrl('')
+      toast.success('URL shortened successfully!')
+      if (onShorten) onShorten() // Trigger refresh
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Failed to shorten URL');
-      }
-      toast.error('Failed to shorten URL');
+      setError(err instanceof Error ? err.message : 'Failed to shorten URL')
+      toast.error('Failed to shorten URL')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-3xl mx-auto mb-12 p-6 rounded-lg shadow-md transition-colors dark:bg-gray-900 bg-white">
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold mb-2">Shorten Your URL</h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Paste your long URL below and get a shareable, shortened link instantly.
+          Paste your long URL below and get a shareable, shortened link
+          instantly.
         </p>
       </div>
 
@@ -83,7 +80,7 @@ const UrlShortener = () => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default UrlShortener;
+export default UrlShortener
