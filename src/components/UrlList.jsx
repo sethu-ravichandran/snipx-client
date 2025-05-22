@@ -3,9 +3,10 @@ import { Clock, Copy, ExternalLink } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getUrls } from '../util/urlUtility'
 
-const UrlList = ({ refresh }) => {
+const UrlList = () => {
   const [urls, setUrls] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [refreshToggle, setRefreshToggle] = useState(false)
 
   const fetchUrls = async () => {
     try {
@@ -23,7 +24,7 @@ const UrlList = ({ refresh }) => {
     fetchUrls()
     const interval = setInterval(fetchUrls, 30000)
     return () => clearInterval(interval)
-  }, [refresh])
+  }, [refreshToggle])
 
   const copyToClipboard = (shortUrl) => {
     navigator.clipboard
@@ -41,6 +42,11 @@ const UrlList = ({ refresh }) => {
       hour: 'numeric',
       minute: 'numeric'
     }).format(date)
+  }
+
+  const handleShortUrlClick = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer')
+    setRefreshToggle((prev) => !prev)
   }
 
   if (isLoading) {
@@ -92,15 +98,13 @@ const UrlList = ({ refresh }) => {
                   </h4>
 
                   <div className="flex items-center mt-2">
-                    <a
-                      href={shortUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center"
+                    <span
+                      onClick={() => handleShortUrlClick(shortUrl)}
+                      className="cursor-pointer text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center"
                     >
                       {shortUrl.replace(/^https?:\/\//, '')}
                       <ExternalLink className="w-4 h-4 ml-1 inline" />
-                    </a>
+                    </span>
                   </div>
                 </div>
 
